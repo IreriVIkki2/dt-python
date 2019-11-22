@@ -19,7 +19,7 @@ def updateChannelUploadStatus(channel_key, status):
 
 def handleRemoveVideoFromQueue(queue, video_id, channel_key, limits):
     return requests.post(removeVideoFromQueue, data={
-        "queue": queue, "videoId": video_id, "channelKey": channel_key, "limits": json.dumps(_limits)})
+        "queue": queue, "videoId": video_id, "channelKey": channel_key, "limits": json.dumps(limits)})
 
 
 def upload_to_dailymotion():
