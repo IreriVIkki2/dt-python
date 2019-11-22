@@ -176,4 +176,4 @@ def upload_to_dailymotion():
         return "[Error publishing video]"
 
 
-# upload_to_dailymotion()
+upload_to_dailymotion()
