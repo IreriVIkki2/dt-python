@@ -1,5 +1,6 @@
 from stopwords import stop_words
 from pytube import YouTube
+from current_channel import _channel_key
 import dailymotion
 import requests
 import shutil
@@ -8,7 +9,6 @@ import json
 import os
 import re
 
-_channel_key = "b2779280c0d27d97a9da"
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
 
 updateChannelUploadStatusUrl = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateChannelUploadStatus"
@@ -184,4 +184,4 @@ def upload_to_dailymotion():
         return "[Error publishing video]"
 
 
-print(upload_to_dailymotion())
+upload_to_dailymotion()
