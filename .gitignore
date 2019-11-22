@@ -2,6 +2,7 @@ __pycache__/
 dtenv/
 node_modules/
 pip/
+videos/
 .env
 firestore-functions.js
 firestore.js
