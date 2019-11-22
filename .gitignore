@@ -1,0 +1,12 @@
+__pycache__/
+dtenv/
+node_modules/
+pip/
+.env
+firestore-functions.js
+firestore.js
+index.js
+package-lock.json
+package.json
+yt-functions.js
+
