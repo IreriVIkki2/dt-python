@@ -3,6 +3,7 @@ from pytube import YouTube
 import dailymotion
 import requests
 import shutil
+import time
 import json
 import os
 import re
@@ -32,6 +33,8 @@ def upload_to_dailymotion():
     except Exception as e:
         os.mkdir(output_path)
 
+    time.sleep(2)
+
     getDailyMotionAccount = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getDailyMotionAccount?channelKey={_channel_key}"
 
     account = requests.get(url=getDailyMotionAccount)
@@ -56,6 +59,8 @@ def upload_to_dailymotion():
         info=_info
     )
 
+    time.sleep(2)
+
     def getVideo():
         getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
 
@@ -74,6 +79,8 @@ def upload_to_dailymotion():
     video = getVideo()
     print(video)
 
+    time.sleep(2)
+
     if video == "wait":
         data = {
             "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None}
@@ -86,9 +93,6 @@ def upload_to_dailymotion():
     _title = video["title"]
     _tags = video["tags"]
     _video_size = 0
-
-    if(_description == "null"):
-        _description = _title
 
     try:
         # Get videos streams
@@ -119,6 +123,8 @@ def upload_to_dailymotion():
         updateChannelUploadStatus(_channel_key, data)
         return handleRemoveVideoFromQueue(_queue, _video_id)
 
+    time.sleep(2)
+
     try:
         url = dm.upload(f'{output_path}{_video_id}.mp4')
     except Exception as e:
@@ -126,6 +132,8 @@ def upload_to_dailymotion():
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id}
         updateChannelUploadStatus(_channel_key, data)
         return handleRemoveVideoFromQueue(_queue, _video_id)
+
+    time.sleep(2)
 
     rx = re.compile(r'[A-Za-z]+')
     tw = rx.findall(_title)
@@ -154,7 +162,7 @@ def upload_to_dailymotion():
                     'title': _title,
                     'description': _description,
                     'player_next_video': _player_next_video,
-                    'tags': list(set(title_tags + description_tags + _tags)),
+                    'tags': " ".join(list(set(_tags + title_tags + description_tags)))[:20],
                     'thumbnail_url': _thumbnail_url,
                     'published': 'true',
                     'channel': 'tv',
@@ -176,4 +184,4 @@ def upload_to_dailymotion():
         return "[Error publishing video]"
 
 
-upload_to_dailymotion()
+print(upload_to_dailymotion())
