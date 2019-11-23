@@ -159,7 +159,7 @@ def upload_to_dailymotion():
                     'title': _title,
                     'description': _description,
                     'player_next_video': _player_next_video,
-                    'tags': " ".join(list(set(_tags + title_tags + description_tags)))[:20],
+                    'tags': list(_tags + title_tags + description_tags)[:40],
                     'thumbnail_url': _thumbnail_url,
                     'published': 'true',
                     'channel': 'tv',
