@@ -84,6 +84,7 @@ def upload_to_dailymotion():
     if video == "wait":
         data = {
             "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None}
+        print(data)
         return updateChannelUploadStatus(_channel_key, data)
 
     _thumbnail_url = video["thumbnail_url"]
@@ -111,6 +112,7 @@ def upload_to_dailymotion():
         if(_video_size > _max_video_size):
             data = {
                 "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id}
+            print(data)
             return updateChannelUploadStatus(_channel_key, data)
 
         stream.download(
@@ -118,7 +120,10 @@ def upload_to_dailymotion():
             filename=_video_id
         )
     except Exception as e:
-        return upload_to_dailymotion()
+        data = {
+            "code": 420, "message": "Error: downloading video failed", "videoId": _video_id}
+        print(data)
+        return updateChannelUploadStatus(_channel_key, data)
 
     time.sleep(2)
 
@@ -127,6 +132,7 @@ def upload_to_dailymotion():
     except Exception as e:
         data = {
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id}
+        print(data)
         updateChannelUploadStatus(_channel_key, data)
         return handleRemoveVideoFromQueue(_queue, _video_id)
 
@@ -167,6 +173,7 @@ def upload_to_dailymotion():
 
         data = {
             "code": 200, "message": "Success: Video uploaded to dailymotion", "videoId": _video_id}
+        print(data)
 
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
@@ -176,6 +183,7 @@ def upload_to_dailymotion():
     except Exception as e:
         data = {
             "code": 500, "message": "Error: Publishing video failed", "videoId": _video_id}
+        print(data)
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
         return "[Error publishing video]"
