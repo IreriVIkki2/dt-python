@@ -123,7 +123,8 @@ def upload_to_dailymotion():
         data = {
             "code": 420, "message": "Error: downloading video failed", "videoId": _video_id}
         print(data)
-        return updateChannelUploadStatus(_channel_key, data)
+        updateChannelUploadStatus(_channel_key, data)
+        return handleRemoveVideoFromQueue(_queue, _video_id)
 
     time.sleep(2)
 
