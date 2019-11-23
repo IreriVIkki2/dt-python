@@ -118,10 +118,7 @@ def upload_to_dailymotion():
             filename=_video_id
         )
     except Exception as e:
-        data = {
-            "code": 500, "message": "Error: Downloading video failed", "videoId": _video_id}
-        updateChannelUploadStatus(_channel_key, data)
-        return handleRemoveVideoFromQueue(_queue, _video_id)
+        return upload_to_dailymotion()
 
     time.sleep(2)
 
