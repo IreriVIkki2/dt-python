@@ -27,13 +27,6 @@ def upload_to_dailymotion():
 
     # Delete any videos in the videos folder
     output_path = f'{os.getcwd()}/videos/'
-    try:
-        shutil.rmtree(output_path)
-        os.mkdir(output_path)
-    except Exception as e:
-        os.mkdir(output_path)
-
-    time.sleep(2)
 
     getDailyMotionAccount = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getDailyMotionAccount?channelKey={_channel_key}"
 
@@ -93,40 +86,59 @@ def upload_to_dailymotion():
     _video_length = video["length"]
     _title = video["title"]
     _tags = video["tags"]
-    _video_size = 0
 
-    try:
-        # Get videos streams
-        yt_download = YouTube(f"https://www.youtube.com/watch?v={_video_id}")
+    def download_video():
+        for x in range(5):
+            try:
+                shutil.rmtree(output_path)
+                os.mkdir(output_path)
+            except Exception as e:
+                download_video()
 
-        # Download the youtube video
-        stream = yt_download.streams.filter(
-            progressive=True,
-            file_extension='mp4'
-        ).order_by(
-            'resolution'
-        ).desc().first()
+            try:
+                # Get videos streams
+                yt_download = YouTube(
+                    f"https://www.youtube.com/watch?v={_video_id}")
 
-        _video_size += stream.filesize
+                # Download the youtube video
+                stream = yt_download.streams.filter(
+                    progressive=True,
+                    file_extension='mp4'
+                ).order_by(
+                    'resolution'
+                ).desc().first()
 
-        if(_video_size > _max_video_size):
+                _video_size = stream.filesize
+                print(stream.filesize)
+
+                if(_video_size > _max_video_size):
+                    data = {
+                        "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id}
+                    print(data)
+                    return updateChannelUploadStatus(_channel_key, data)
+
+                stream.download(
+                    output_path=output_path,
+                    filename=_video_id
+                )
+
+                return _video_size
+            except Exception as e:
+                data = {
+                    "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id}
+                print(data, e)
+                updateChannelUploadStatus(_channel_key, data)
+        else:
             data = {
-                "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id}
+                "code": 400, "message": "Error: downloading video failed", "videoId": _video_id}
             print(data)
-            return updateChannelUploadStatus(_channel_key, data)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, channel_key=None, limits={})
+            updateChannelUploadStatus(_channel_key, data)
+            time.sleep(5)
+            return upload_to_dailymotion()
 
-        stream.download(
-            output_path=output_path,
-            filename=_video_id
-        )
-    except Exception as e:
-        data = {
-            "code": 420, "message": "Error: downloading video failed", "videoId": _video_id}
-        print(data)
-        updateChannelUploadStatus(_channel_key, data)
-        return handleRemoveVideoFromQueue(_queue, _video_id)
-
-    time.sleep(2)
+    _video_size = download_video()
 
     try:
         url = dm.upload(f'{output_path}{_video_id}.mp4')
@@ -135,18 +147,18 @@ def upload_to_dailymotion():
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id}
         print(data)
         updateChannelUploadStatus(_channel_key, data)
-        return handleRemoveVideoFromQueue(_queue, _video_id)
+        return handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
 
     time.sleep(2)
 
     rx = re.compile(r'[A-Za-z]+')
     tw = rx.findall(_title)
     title_tags = list(
-        set([word for word in tw if word not in stop_words and len(word) > 2]))
+        set([word for word in tw if word.lower() not in stop_words and len(word) > 2]))
 
     dw = rx.findall(_description)
     description_tags = list(set(
-        [word for word in dw if word not in stop_words and len(word) > 2]))
+        [word for word in dw if word.lower() not in stop_words and len(word) > 2]))
 
     _player_next_video = dm.get('/videos', {
         'fields': 'id',
@@ -159,6 +171,11 @@ def upload_to_dailymotion():
         "videoSize": _max_video_size - _video_size
     }
 
+    final_tags = list(set([tag for tag in list(
+        _tags + title_tags + description_tags) if tag.lower() not in stop_words and len(tag) > 2]))
+
+    print(','.join(final_tags[:35]))
+
     try:
         dm.post('/me/videos',
                 {
@@ -166,7 +183,7 @@ def upload_to_dailymotion():
                     'title': _title,
                     'description': _description,
                     'player_next_video': _player_next_video,
-                    'tags': list(_tags + title_tags + description_tags)[:40],
+                    'tags': ','.join(final_tags[:35]),
                     'thumbnail_url': _thumbnail_url,
                     'published': 'true',
                     'channel': 'tv',
