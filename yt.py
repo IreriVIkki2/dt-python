@@ -65,7 +65,7 @@ def upload_to_dailymotion():
             return res["video"]
 
         elif res["action"] == 205:
-            time.sleep(60)
+            time.sleep(100)
             return getVideo()
 
         elif res["action"] == 420:
