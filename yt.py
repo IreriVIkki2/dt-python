@@ -32,7 +32,7 @@ def upload_to_dailymotion():
 
     account = requests.get(url=getDailyMotionAccount)
     account = account.json()
-    print(account)
+    print('[ChannelAccount info]        ', account, '\n')
 
     _queue = account["queryId"]["current"]
     _max_video_length = account["limits"]["videoDuration"]
@@ -59,25 +59,26 @@ def upload_to_dailymotion():
 
         res = requests.get(url=getYouTubeVideo)
         res = res.json()
+        print('[YouTube Video       ]', res, '\n')
 
         if res["action"] == 200:
             return res["video"]
 
         elif res["action"] == 205:
+            time.sleep(60)
             return getVideo()
 
         elif res["action"] == 420:
             return "wait"
 
     video = getVideo()
-    print(video)
 
     time.sleep(2)
 
     if video == "wait":
         data = {
             "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None}
-        print(data)
+        print('[Status --        ]', data, '\n')
         return updateChannelUploadStatus(_channel_key, data)
 
     _thumbnail_url = video["thumbnail_url"]
@@ -109,12 +110,11 @@ def upload_to_dailymotion():
                 ).desc().first()
 
                 _video_size = stream.filesize
-                print(stream.filesize)
 
                 if(_video_size > _max_video_size):
                     data = {
                         "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id}
-                    print(data)
+                    print('[Status --        ]', data, '\n')
                     return updateChannelUploadStatus(_channel_key, data)
 
                 stream.download(
@@ -126,12 +126,12 @@ def upload_to_dailymotion():
             except Exception as e:
                 data = {
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id}
-                print(data, e)
+                print('[Status --        ]', data, '\n')
                 updateChannelUploadStatus(_channel_key, data)
         else:
             data = {
                 "code": 400, "message": "Error: downloading video failed", "videoId": _video_id}
-            print(data)
+            print('[Status --        ]', data, '\n')
             handleRemoveVideoFromQueue(
                 _queue, _video_id, channel_key=None, limits={})
             updateChannelUploadStatus(_channel_key, data)
@@ -139,17 +139,20 @@ def upload_to_dailymotion():
             return upload_to_dailymotion()
 
     _video_size = download_video()
+    print('[Video Downloaded successfully   ]', '\n')
 
     try:
         url = dm.upload(f'{output_path}{_video_id}.mp4')
     except Exception as e:
+        print(e)
         data = {
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id}
-        print(data)
         updateChannelUploadStatus(_channel_key, data)
+        print('[Status --        ]', data, '\n')
         return handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
 
     time.sleep(2)
+    print('[Video Uploaded successfully   ]', '\n')
 
     rx = re.compile(r'[A-Za-z]+')
     tw = rx.findall(_title)
@@ -174,8 +177,6 @@ def upload_to_dailymotion():
     final_tags = list(set([tag for tag in list(
         _tags + title_tags + description_tags) if tag.lower() not in stop_words and len(tag) > 2]))
 
-    print(','.join(final_tags[:35]))
-
     try:
         dm.post('/me/videos',
                 {
@@ -191,8 +192,7 @@ def upload_to_dailymotion():
 
         data = {
             "code": 200, "message": "Success: Video uploaded to dailymotion", "videoId": _video_id}
-        print(data)
-
+        print('[Status --        ]', data, '\n')
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
 
@@ -201,7 +201,7 @@ def upload_to_dailymotion():
     except Exception as e:
         data = {
             "code": 500, "message": "Error: Publishing video failed", "videoId": _video_id}
-        print(data)
+        print('[Status --        ]', data, '\n')
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
         return "[Error publishing video]"
