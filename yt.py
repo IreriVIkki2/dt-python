@@ -123,6 +123,7 @@ def upload_to_dailymotion():
                     f"https://www.youtube.com/watch?v={_video_id}")
 
                 # Download the youtube video
+                print('getting streams')
                 streams = yt_download.streams.filter(
                     progressive=True,
                     file_extension='mp4'
@@ -130,14 +131,13 @@ def upload_to_dailymotion():
                     'resolution'
                 ).desc().all()
 
-                print('\n')
-                print(streams)
-                print('\n')
+                print('found some streams')
+
+                print(streams'\n')
 
                 stream = streams[x]
 
-                print(stream)
-                print('\n')
+                print(stream, '\n')
 
                 _video_size = stream.filesize
 
@@ -154,8 +154,7 @@ def upload_to_dailymotion():
 
                 return _video_size
             except Exception as e:
-                print(e)
-                print('\n')
+                print(e, '\n')
                 data = {
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
