@@ -39,9 +39,9 @@ def upload_to_dailymotion():
 
     _is_limited = account['uploadStatus']['isLimited']
     _limited_at = account['uploadStatus']['limitedAt']
-    _now = datetime.now(pytz.timezone('Africa/Nairobi'))
 
     if _is_limited:
+        _now = datetime.now(pytz.timezone('Africa/Nairobi'))
         print(_now)
         if _now-timedelta(hours=24) <= dateutil.parser.parse(account['uploadStatus']['limitedAt']) <= _now:
             data = {
@@ -222,7 +222,7 @@ def upload_to_dailymotion():
         if 'access_forbidden: You reached your upload rate limit' in e.message:
             data = {
                 "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": True,
-                "limitedAt": _now}
+                "limitedAt": f"{datetime.now(pytz.timezone('Africa/Nairobi'))}"}
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
         else:
