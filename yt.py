@@ -12,6 +12,14 @@ import json
 import os
 import re
 
+output_path = f'{os.getcwd()}/videos/'
+
+if os.path.isdir(output_path):
+    shutil.rmtree(output_path)
+
+os.mkdir(output_path)
+
+
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
 
 updateChannelUploadStatusUrl = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateChannelUploadStatus"
@@ -29,7 +37,6 @@ def handleRemoveVideoFromQueue(queue, video_id, channel_key, limits):
 def upload_to_dailymotion():
 
     # Delete any videos in the videos folder
-    output_path = f'{os.getcwd()}/videos/'
 
     getDailyMotionAccount = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getDailyMotionAccount?channelKey={_channel_key}"
 
@@ -105,11 +112,6 @@ def upload_to_dailymotion():
 
     def download_video():
         for x in range(5):
-            try:
-                shutil.rmtree(output_path)
-                os.mkdir(output_path)
-            except Exception as e:
-                download_video()
 
             try:
                 # Get videos streams
@@ -135,6 +137,12 @@ def upload_to_dailymotion():
                 ).order_by(
                     'resolution'
                 ).desc().all()
+
+                if x+1 is len(streams):
+                    data = {
+                        "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+                    print('[Status --        ]', data, '\n')
+                    return updateChannelUploadStatus(_channel_key, data)
 
                 print(streams, '\n')
 
