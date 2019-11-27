@@ -130,7 +130,12 @@ def upload_to_dailymotion():
                     'resolution'
                 ).desc()
 
+                print('\n')
+                print(streams)
+                print('\n')
+
                 stream = streams[x]
+
                 print(stream)
                 print('\n')
 
@@ -155,9 +160,9 @@ def upload_to_dailymotion():
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
                 updateChannelUploadStatus(_channel_key, data)
-                if "This video is unavailable" in e.message:
-                    return handleRemoveVideoFromQueue(
-                        _queue, _video_id, channel_key=None, limits={})
+                # if "This video is unavailable" in e.message:
+                #     return handleRemoveVideoFromQueue(
+                #         _queue, _video_id, channel_key=None, limits={})
         else:
             data = {
                 "code": 400, "message": "Error: downloading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
