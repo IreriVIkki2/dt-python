@@ -14,11 +14,16 @@ import re
 
 output_path = f'{os.getcwd()}/videos/'
 
-if os.path.isdir(output_path):
-    shutil.rmtree(output_path)
 
-os.mkdir(output_path)
+def clear():
 
+    if os.path.isdir(output_path):
+        shutil.rmtree(output_path)
+
+    os.mkdir(output_path)
+
+
+clear()
 
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
 
