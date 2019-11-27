@@ -128,7 +128,7 @@ def upload_to_dailymotion():
                     file_extension='mp4'
                 ).order_by(
                     'resolution'
-                ).desc()
+                ).desc().all()
 
                 print('\n')
                 print(streams)
