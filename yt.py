@@ -15,17 +15,6 @@ import re
 
 output_path = f'{os.getcwd()}/videos/'
 
-
-def on_rm_error(func, path, exc_info):
-    os.chmod(output_path, stat.S_IWRITE)
-    os.unlink(output_path)
-
-
-if os.path.isdir(output_path):
-    shutil.rmtree(output_path, onerror=on_rm_error)
-
-os.mkdir(output_path)
-
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
 
 updateChannelUploadStatusUrl = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateChannelUploadStatus"
@@ -84,6 +73,11 @@ def upload_to_dailymotion():
         scope=_scope,
         info=_info
     )
+
+    if os.path.isdir(output_path):
+        shutil.rmtree(output_path)
+
+    os.mkdir(output_path)
 
     def getVideo():
         getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
