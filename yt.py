@@ -110,6 +110,7 @@ def upload_to_dailymotion():
 
     def download_video():
         for x in range(5):
+            time.sleep(20)
             try:
                 shutil.rmtree(output_path)
                 os.mkdir(output_path)
@@ -144,11 +145,14 @@ def upload_to_dailymotion():
 
                 return _video_size
             except Exception as e:
-                print('\n' + e + '\n')
+                print('\n' + e.message + '\n')
                 data = {
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
                 updateChannelUploadStatus(_channel_key, data)
+                if "This video is unavailable" in e.message:
+                    return handleRemoveVideoFromQueue(
+                        _queue, _video_id, channel_key=None, limits={})
         else:
             data = {
                 "code": 400, "message": "Error: downloading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
