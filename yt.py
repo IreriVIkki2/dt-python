@@ -119,6 +119,7 @@ def upload_to_dailymotion():
 
             try:
                 # Get videos streams
+                print('getting video object')
                 yt_download = YouTube(
                     f"https://www.youtube.com/watch?v={_video_id}")
 
@@ -130,8 +131,6 @@ def upload_to_dailymotion():
                 ).order_by(
                     'resolution'
                 ).desc().all()
-
-                print('found some streams')
 
                 print(streams, '\n')
 
