@@ -133,7 +133,7 @@ def upload_to_dailymotion():
 
                 print('found some streams')
 
-                print(streams'\n')
+                print(streams, '\n')
 
                 stream = streams[x]
 
