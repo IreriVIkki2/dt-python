@@ -42,7 +42,7 @@ def upload_to_dailymotion():
     _limited_at = account['uploadStatus']['limitedAt']
 
     if _is_limited:
-        now = datetime.now()
+        now = datetime.now(pytz.timezone('Africa/Nairobi'))
         if now-timedelta(hours=24) <= dateutil.parser.parse(account['uploadStatus']['limitedAt']) <= now:
             data = {
                 "code": 420, "message": "Chilling: waiting on upload limit to be lifted", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
@@ -232,7 +232,7 @@ def upload_to_dailymotion():
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
             # handleRemoveVideoFromQueue(
-                # _queue, _video_id, _channel_key, _limits)
+            # _queue, _video_id, _channel_key, _limits)
 
         return "[Error publishing video]"
 
