@@ -14,12 +14,14 @@ import re
 
 output_path = f'{os.getcwd()}/videos/'
 
-def on_rm_error( func, path, exc_info):
-    os.chmod( output_path, stat.S_IWRITE )
-    os.unlink( output_path )
+
+def on_rm_error(func, path, exc_info):
+    os.chmod(output_path, stat.S_IWRITE)
+    os.unlink(output_path)
+
 
 if os.path.isdir(output_path):
-    shutil.rmtree( output_path, onerror = on_rm_error )
+    shutil.rmtree(output_path, onerror=on_rm_error)
 
 os.mkdir(output_path)
 
@@ -260,4 +262,4 @@ def upload_to_dailymotion():
         return "[Error publishing video]"
 
 
-# upload_to_dailymotion()
+upload_to_dailymotion()
