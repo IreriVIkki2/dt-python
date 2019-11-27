@@ -14,16 +14,14 @@ import re
 
 output_path = f'{os.getcwd()}/videos/'
 
+def on_rm_error( func, path, exc_info):
+    os.chmod( output_path, stat.S_IWRITE )
+    os.unlink( output_path )
 
-def clear():
+if os.path.isdir(output_path):
+    shutil.rmtree( output_path, onerror = on_rm_error )
 
-    if os.path.isdir(output_path):
-        shutil.rmtree(output_path)
-
-    os.mkdir(output_path)
-
-
-clear()
+os.mkdir(output_path)
 
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
 
@@ -262,4 +260,4 @@ def upload_to_dailymotion():
         return "[Error publishing video]"
 
 
-upload_to_dailymotion()
+# upload_to_dailymotion()
