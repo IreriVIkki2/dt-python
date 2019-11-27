@@ -220,7 +220,7 @@ def upload_to_dailymotion():
 
     except Exception as e:
         print(e.message)
-        if e.message is 'access_forbidden: You reached your upload rate limit, please slow down':
+        if 'access_forbidden: You reached your upload rate limit' in e.message:
             data = {
                 "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": True,
                 "limitedAt": f"{datetime.now().isoformat()}+03:00"}
