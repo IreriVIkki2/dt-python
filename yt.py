@@ -38,11 +38,11 @@ def upload_to_dailymotion():
     print('[ChannelAccount info]        ', account, '\n')
 
     _is_limited = account['uploadStatus']['isLimited']
-    print(_is_limited)
     _limited_at = account['uploadStatus']['limitedAt']
 
     if _is_limited:
         now = datetime.now(pytz.timezone('Africa/Nairobi'))
+        print(now)
         if now-timedelta(hours=24) <= dateutil.parser.parse(account['uploadStatus']['limitedAt']) <= now:
             data = {
                 "code": 420, "message": "Chilling: waiting on upload limit to be lifted", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
