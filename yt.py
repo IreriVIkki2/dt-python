@@ -144,6 +144,7 @@ def upload_to_dailymotion():
 
                 return _video_size
             except Exception as e:
+                print('\n' + e + '\n')
                 data = {
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
