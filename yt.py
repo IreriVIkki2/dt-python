@@ -123,6 +123,17 @@ def upload_to_dailymotion():
                 yt_download = YouTube(
                     f"https://www.youtube.com/watch?v={_video_id}")
 
+            except:
+                data = {
+                    "code": 400, "message": "Error: Video unavailabe", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+                print('[Status --        ]', data, '\n')
+                handleRemoveVideoFromQueue(
+                    _queue, _video_id, channel_key=None, limits={})
+                updateChannelUploadStatus(_channel_key, data)
+                time.sleep(5)
+                return upload_to_dailymotion()
+
+            try:
                 # Download the youtube video
                 print('getting streams')
                 streams = yt_download.streams.filter(
@@ -158,9 +169,7 @@ def upload_to_dailymotion():
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
                 updateChannelUploadStatus(_channel_key, data)
-                # if "This video is unavailable" in e.message:
-                #     return handleRemoveVideoFromQueue(
-                #         _queue, _video_id, channel_key=None, limits={})
+
         else:
             data = {
                 "code": 400, "message": "Error: downloading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
