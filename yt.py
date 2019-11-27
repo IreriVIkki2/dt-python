@@ -131,6 +131,8 @@ def upload_to_dailymotion():
                 ).desc()
 
                 stream = streams[x]
+                print(stream)
+                print('\n')
 
                 _video_size = stream.filesize
 
@@ -147,7 +149,8 @@ def upload_to_dailymotion():
 
                 return _video_size
             except Exception as e:
-                print(e + '\n')
+                print(e)
+                print('\n')
                 data = {
                     "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
