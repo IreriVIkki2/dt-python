@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta
+from current_channel import _channel_key
 from stopwords import stop_words
 from pytube import YouTube
-from current_channel import _channel_key
+import dateutil.parser
 import dailymotion
 import requests
 import shutil
@@ -33,6 +35,22 @@ def upload_to_dailymotion():
     account = requests.get(url=getDailyMotionAccount)
     account = account.json()
     print('[ChannelAccount info]        ', account, '\n')
+
+    _is_limited = account['uploadStatus']['isLimited']
+    _limited_at = account['uploadStatus']['limitedAt']
+
+    if _is_limited:
+        now = datetime.now()
+        if now-timedelta(hours=24) <= dateutil.parser.parse(account['uploadStatus']['limitedAt']) <= now:
+            data = {
+                "code": 420, "message": "Chilling: waiting on upload limit to be lifted", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
+            print('[Status --        ]', data, '\n')
+            return updateChannelUploadStatus(_channel_key, data)
+        else:
+            data = {
+                "code": 500, "message": "Here We Go!: upload limit lifted", "videoId": None, "isLimited": False, "limitedAt": _limited_at}
+            print('[Status --        ]', data, '\n')
+            return updateChannelUploadStatus(_channel_key, data)
 
     _queue = account["queryId"]["current"]
     _max_video_length = account["limits"]["videoDuration"]
@@ -77,7 +95,7 @@ def upload_to_dailymotion():
 
     if video == "wait":
         data = {
-            "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None}
+            "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
         print('[Status --        ]', data, '\n')
         return updateChannelUploadStatus(_channel_key, data)
 
@@ -113,7 +131,7 @@ def upload_to_dailymotion():
 
                 if(_video_size > _max_video_size):
                     data = {
-                        "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id}
+                        "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                     print('[Status --        ]', data, '\n')
                     return updateChannelUploadStatus(_channel_key, data)
 
@@ -125,12 +143,12 @@ def upload_to_dailymotion():
                 return _video_size
             except Exception as e:
                 data = {
-                    "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id}
+                    "code": 303, "message": f"Error: downloading video failed, retrying count {x}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                 print('[Status --        ]', data, '\n')
                 updateChannelUploadStatus(_channel_key, data)
         else:
             data = {
-                "code": 400, "message": "Error: downloading video failed", "videoId": _video_id}
+                "code": 400, "message": "Error: downloading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
             print('[Status --        ]', data, '\n')
             handleRemoveVideoFromQueue(
                 _queue, _video_id, channel_key=None, limits={})
@@ -146,7 +164,7 @@ def upload_to_dailymotion():
     except Exception as e:
         print(e)
         data = {
-            "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id}
+            "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
         updateChannelUploadStatus(_channel_key, data)
         print('[Status --        ]', data, '\n')
         return handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
@@ -191,7 +209,7 @@ def upload_to_dailymotion():
                 })
 
         data = {
-            "code": 200, "message": "Success: Video uploaded to dailymotion", "videoId": _video_id}
+            "code": 200, "message": "Success: Video uploaded to dailymotion", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
         print('[Status --        ]', data, '\n')
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
@@ -199,11 +217,19 @@ def upload_to_dailymotion():
         return '[Video uploaded to dailymotion]'
 
     except Exception as e:
-        data = {
-            "code": 500, "message": "Error: Publishing video failed", "videoId": _video_id}
-        print('[Status --        ]', data, '\n')
-        updateChannelUploadStatus(_channel_key, data)
-        handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
+        if e is 'access_forbidden: You reached your upload rate limit, please slow down':
+            data = {
+                "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": True, "limitedAt": datetime.now().isoformat()}
+            print('[Status --        ]', data, '\n')
+            updateChannelUploadStatus(_channel_key, data)
+        else:
+            data = {
+                "code": 400, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+            print('[Status --        ]', data, '\n')
+            updateChannelUploadStatus(_channel_key, data)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
+
         return "[Error publishing video]"
 
 
