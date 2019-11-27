@@ -52,7 +52,7 @@ def upload_to_dailymotion():
             data = {
                 "code": 500, "message": "Here We Go!: upload limit lifted", "videoId": None, "isLimited": False, "limitedAt": _limited_at}
             print('[Status --        ]', data, '\n')
-            return updateChannelUploadStatus(_channel_key, data)
+            updateChannelUploadStatus(_channel_key, data)
 
     _queue = account["queryId"]["current"]
     _max_video_length = account["limits"]["videoDuration"]
