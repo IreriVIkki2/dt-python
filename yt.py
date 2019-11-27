@@ -72,8 +72,6 @@ def upload_to_dailymotion():
         info=_info
     )
 
-    time.sleep(2)
-
     def getVideo():
         getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
 
@@ -85,15 +83,12 @@ def upload_to_dailymotion():
             return res["video"]
 
         elif res["action"] == 205:
-            time.sleep(100)
             return getVideo()
 
         elif res["action"] == 420:
             return "wait"
 
     video = getVideo()
-
-    time.sleep(2)
 
     if video == "wait":
         data = {
@@ -110,7 +105,6 @@ def upload_to_dailymotion():
 
     def download_video():
         for x in range(5):
-            time.sleep(20)
             try:
                 shutil.rmtree(output_path)
                 os.mkdir(output_path)
@@ -130,7 +124,6 @@ def upload_to_dailymotion():
                 handleRemoveVideoFromQueue(
                     _queue, _video_id, channel_key=None, limits={})
                 updateChannelUploadStatus(_channel_key, data)
-                time.sleep(5)
                 return upload_to_dailymotion()
 
             try:
@@ -177,7 +170,6 @@ def upload_to_dailymotion():
             handleRemoveVideoFromQueue(
                 _queue, _video_id, channel_key=None, limits={})
             updateChannelUploadStatus(_channel_key, data)
-            time.sleep(5)
             return upload_to_dailymotion()
 
     _video_size = download_video()
@@ -193,7 +185,6 @@ def upload_to_dailymotion():
         print('[Status --        ]', data, '\n')
         return handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
 
-    time.sleep(2)
     print('[Video Uploaded successfully   ]', '\n')
 
     rx = re.compile(r'[A-Za-z]+')
