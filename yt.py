@@ -138,11 +138,22 @@ def upload_to_dailymotion():
                     'resolution'
                 ).desc().all()
 
+                if len(streams) is 0:
+                    data = {
+                        "code": 420, "message": "No downloadable streams found for this video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+                    print('[Status --        ]', data, '\n')
+                    updateChannelUploadStatus(_channel_key, data)
+                    handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+                    return upload_to_dailymotion()
+                    
+
                 if x+1 is len(streams):
                     data = {
-                        "code": 420, "message": "Slowing down, Video upload size remaining", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+                        "code": 420, "message": "Unable to download this video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
                     print('[Status --        ]', data, '\n')
-                    return updateChannelUploadStatus(_channel_key, data)
+                    updateChannelUploadStatus(_channel_key, data)
+                    handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+                    return upload_to_dailymotion()
 
                 print(streams, '\n')
 
@@ -180,11 +191,22 @@ def upload_to_dailymotion():
             updateChannelUploadStatus(_channel_key, data)
             return upload_to_dailymotion()
 
+    _file_path = f'{output_path}{_video_id}.mp4'
+
+    if not os.path.isfile(_file_path):
+        data = {
+            "code": 420, "message": "Video was not downloaded, retrying with anther video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+        print('[Status --        ]', data, '\n')
+        updateChannelUploadStatus(_channel_key, data)
+        handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+        return upload_to_dailymotion()
+        
+
     _video_size = download_video()
     print('[Video Downloaded successfully   ]', '\n')
 
     try:
-        url = dm.upload(f'{output_path}{_video_id}.mp4')
+        url = dm.upload(_file_path)
     except Exception as e:
         print(e)
         data = {
