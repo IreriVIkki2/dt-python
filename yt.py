@@ -192,14 +192,15 @@ def upload_to_dailymotion():
             return upload_to_dailymotion()
 
     _file_path = f'{output_path}{_video_id}.mp4'
+    print(os.path.isfile(_file_path))
 
-    if not os.path.isfile(_file_path):
-        data = {
-            "code": 420, "message": "Video was not downloaded, retrying with anther video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
-        print('[Status --        ]', data, '\n')
-        updateChannelUploadStatus(_channel_key, data)
-        handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
-        return upload_to_dailymotion()
+    # if not os.path.isfile(_file_path):
+    #     data = {
+    #         "code": 420, "message": "Video was not downloaded, retrying with anther video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+    #     print('[Status --        ]', data, '\n')
+    #     updateChannelUploadStatus(_channel_key, data)
+    #     handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+    #     return upload_to_dailymotion()
         
 
     _video_size = download_video()
