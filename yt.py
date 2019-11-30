@@ -205,7 +205,7 @@ def upload_to_dailymotion():
         handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
         return upload_to_dailymotion()
 
-        
+
     print('[Video Downloaded successfully   ]', '\n')
 
     try:
@@ -216,7 +216,9 @@ def upload_to_dailymotion():
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
         updateChannelUploadStatus(_channel_key, data)
         print('[Status --        ]', data, '\n')
-        return handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+        handleRemoveVideoFromQueue(_queue, _video_id, channel_key=None, limits={})
+        return upload_to_dailymotion()
+
 
     print('[Video Uploaded successfully   ]', '\n')
 
