@@ -83,7 +83,13 @@ def upload_to_dailymotion():
         getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
 
         res = requests.get(url=getYouTubeVideo)
-        res = res.json()
+        try:
+            res = res.json()
+        except Exception as e:
+            print(e)
+            time.sleep(100)
+            return getVideo()
+
         print('[YouTube Video       ]', res, '\n')
 
         if res["action"] == 200:
@@ -210,7 +216,7 @@ def upload_to_dailymotion():
 
     try:
         url = dm.upload(_file_path)
-    except Exception as e:
+    except Exception as e:  
         print(e)
         data = {
             "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
