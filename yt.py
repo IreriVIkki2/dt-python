@@ -286,6 +286,7 @@ def upload_to_dailymotion():
             updateChannelUploadStatus(_channel_key, data)
             handleRemoveVideoFromQueue(
                 _queue, _video_id, _channel_key, _limits)
+            return upload_to_dailymotion()
 
         return "[Error publishing video]"
 
