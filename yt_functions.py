@@ -177,7 +177,7 @@ def create_queue():
             _next.append(_id)
 
     if len(_next) is 0:
-        _new_next = _ids[:10]
+        _new_next = _ids[:10] if len(_ids) else raw_video_ids[:25]
     else:
         _new_next = _next[1:]
 
