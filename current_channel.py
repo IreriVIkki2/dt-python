@@ -1,6 +1,6 @@
 import requests
 
-_channel_key = "b035404431ad14acd02c"
+_channel_key = ""
 
 
 def get_accout():
