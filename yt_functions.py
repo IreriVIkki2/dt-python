@@ -95,7 +95,7 @@ def get_valid_video_info(_video_id, account):
 
     if res.status_code == 403:
         get_api_key(True)
-        return get_valid_video_info(_video_id)
+        return get_valid_video_info(_video_id, account)
     elif res.status_code is not 200:
         error = res.json()
         print(error["error"])
@@ -138,7 +138,7 @@ def get_valid_video_info(_video_id, account):
 
     if res.status_code == 403:
         get_api_key(True)
-        return get_valid_video_info(_video_id)
+        return get_valid_video_info(_video_id, account)
     elif res.status_code is not 200:
         error = res.json()
         print(error["error"])
