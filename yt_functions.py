@@ -119,13 +119,13 @@ def get_valid_video_info(_video_id):
     if _subscriber_count < _min_subscribers or _subscriber_count > _max_subscribers:
         _valid_video["code"] = 101
 
-    elif _video_age > _max_video_age:
+    elif int(_video_age) > int(_max_video_age):
         _valid_video["code"] = 102
 
-    elif _video_vpm < _min_vpm:
+    elif int(_video_vpm) < int(_min_vpm):
         _valid_video["code"] = 103
 
-    elif _video_length > _max_video_length:
+    elif int(_video_length) > int(_max_video_length):
         _valid_video["code"] = 104
 
     else:
