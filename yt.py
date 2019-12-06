@@ -31,15 +31,15 @@ def handleRemoveVideoFromQueue(queue, video_id, channel_key, limits):
         "queue": queue, "videoId": video_id, "channelKey": channel_key, "limits": json.dumps(limits)})
 
 
-def get_video(_max_video_length):
-    getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
+def get_video(_max_video_length, _remove_bug):
+    getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}&removeBuggedVideo={_remove_bug}"
 
     res = requests.get(url=getYouTubeVideo)
     try:
         res_json = res.json()
     except Exception as e:
         print(e)
-        return get_video(_max_video_length)
+        return get_video(_max_video_length=_max_video_length, _remove_bug=True)
 
     print('\n', '[Video found]', res_json, '\n')
     action = res_json["action"]
@@ -50,7 +50,7 @@ def get_video(_max_video_length):
     elif action == 205:
         time.sleep(15)
         create_queue()
-        return get_video(_max_video_length)
+        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
 
     elif action == 420:
         return action
@@ -101,7 +101,7 @@ def upload_to_dailymotion():
 
     os.mkdir(output_path)
 
-    video = get_video(_max_video_length)
+    video = get_video(_max_video_length=_max_video_length, _remove_bug=False)
 
     if video == 420:
         data = {
