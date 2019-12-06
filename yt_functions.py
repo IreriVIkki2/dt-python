@@ -34,7 +34,7 @@ def video_length_in_seconds(ar):
 
 
 def query_for_initial_suggestions(video_id):
-    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=7&relatedToVideoId={video_id}&type=video&key={api_key}"
+    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&relatedToVideoId={video_id}&type=video&key={api_key}"
 
     res = requests.get(url)
     if res.status_code is 403:
@@ -153,12 +153,12 @@ def create_queue():
     else:
         _search_id = _next[0]
 
-    _ids = query_for_initial_suggestions(video_id=_search_id)
+    raw_video_ids = query_for_initial_suggestions(video_id=_search_id)
 
-    # res = requests.get(f"{filter_ids_base_url}{','.join(raw_video_ids)}")
-    # res_json = res.json()
+    res = requests.get(f"{filter_ids_base_url}{','.join(raw_video_ids)}")
+    res_json = res.json()
 
-    # _ids = res_json["finalIds"]
+    _ids = res_json["finalIds"]
 
     for _id in _ids:
         _valid_video = get_valid_video_info(_id)
