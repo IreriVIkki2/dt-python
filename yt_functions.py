@@ -1,4 +1,4 @@
-from current_channel import account, api_key, _channel_key
+from current_channel import account, _channel_key
 from datetime import datetime
 import dateutil.parser
 import requests
@@ -10,6 +10,36 @@ delete_queue_base_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/
 filter_ids_base_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeExistingIds?ids="
 
 update_queue_outcome_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateCreateQueueOutcome"
+
+get_youtube_apikey_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey"
+
+update_youtube_apikey_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateYouTubeApiKey"
+
+
+def get_api_key(_api_key_limited):
+    f1 = open("api_key.txt", "r")
+    _current_api_key = f1.read()
+    f1.close()
+    if _api_key_limited:
+        data = {
+            "key": _current_api_key,
+            "limited": True,
+            "limitedAt": datetime.now().isoformat()
+        }
+        requests.post(update_youtube_apikey_url, data={
+                      "keyObject": json.dumps(data)})
+
+    if _api_key_limited or not _current_api_key:
+        res = requests.get(get_youtube_apikey_url)
+        api_key = res.json()
+        _new_api_key = api_key["key"]
+        print("_new_api_key", _new_api_key)
+        f2 = open("api_key.txt", "w")
+        f2.write(_new_api_key)
+        f2.close()
+        return _new_api_key
+    else:
+        return _current_api_key
 
 
 def video_age_in_minutes(_published_date):
@@ -34,11 +64,12 @@ def video_length_in_seconds(ar):
 
 
 def query_for_initial_suggestions(video_id):
+    api_key = get_api_key(False)
     url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&relatedToVideoId={video_id}&type=video&key={api_key}"
 
     res = requests.get(url)
-    if res.status_code is 403:
-        # from current_channel import api_key
+    if res.status_code == 403:
+        get_api_key(True)
         return query_for_initial_suggestions(video_id)
     elif res.status_code is not 200:
         error = res.json()
@@ -50,13 +81,14 @@ def query_for_initial_suggestions(video_id):
 
 
 def get_valid_video_info(_video_id):
+    api_key = get_api_key(False)
     _valid_video = {"code": 200}
     video_url = f"https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics&id={_video_id}&key={api_key}"
 
     res = requests.get(video_url)
 
-    if res.status_code is 403:
-        # from current_channel import api_key
+    if res.status_code == 403:
+        get_api_key(True)
         return get_valid_video_info(_video_id)
     elif res.status_code is not 200:
         error = res.json()
@@ -94,10 +126,12 @@ def get_valid_video_info(_video_id):
     _video_length_array = list(search_options["maxVideoLength"].values())
     _max_video_length = video_length_in_seconds(_video_length_array)
 
+    api_key = get_api_key(False)
     channel_url = f"https://www.googleapis.com/youtube/v3/channels?part=statistics,brandingSettings&id={_channel_id}&key={api_key}"
     res = requests.get(channel_url)
 
-    if res.status_code is 403:
+    if res.status_code == 403:
+        get_api_key(True)
         return get_valid_video_info(_video_id)
     elif res.status_code is not 200:
         error = res.json()
@@ -157,8 +191,10 @@ def create_queue():
 
     res = requests.get(f"{filter_ids_base_url}{','.join(raw_video_ids)}")
     res_json = res.json()
-
     _ids = res_json["finalIds"]
+
+    if len(_next) is 0:
+        _next = _ids[:10] if len(_ids) else raw_video_ids[:25]
 
     for _id in _ids:
         _valid_video = get_valid_video_info(_id)
@@ -176,11 +212,7 @@ def create_queue():
             _new_queue[_id] = _valid_video
             _next.append(_id)
 
-    if len(_next) is 0:
-        _new_next = _ids[:10] if len(_ids) else raw_video_ids[:25]
-    else:
-        _new_next = _next[1:]
-
+    _new_next = _next[1:]
     _new_current = _next[0]
 
     _queryId = {
