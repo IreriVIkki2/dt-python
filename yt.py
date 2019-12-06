@@ -38,8 +38,8 @@ def get_video(_max_video_length, _remove_bug):
     try:
         res_json = res.json()
     except Exception as e:
-        print(e)
-        return get_video(_max_video_length=_max_video_length, _remove_bug=True)
+        create_queue()
+        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
 
     print('\n', '[Video found]', res_json, '\n')
     action = res_json["action"]
