@@ -4,11 +4,11 @@ node_modules/
 pip/
 videos/
 .env
+env/
 firestore-functions.js
 firestore.js
 index.js
 package-lock.json
 package.json
 yt-functions.js
-current_channel.py
 .vscode/
