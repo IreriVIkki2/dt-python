@@ -63,16 +63,16 @@ def video_length_in_seconds(ar):
     return int(ar[0]) * 3600 + int(ar[1]) * 60 + int(ar[2])
 
 
-def query_for_initial_suggestions(video_id, _max_video_age):
+def query_for_initial_suggestions(_video_id, _max_video_age):
     api_key = get_api_key(False)
     d1 = datetime.datetime.now()
     d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
-    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d2.isoformat()}relatedToVideoId={video_id}&type=video&key={api_key}"
+    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d2.isoformat()}relatedToVideoId={_video_id}&type=video&key={api_key}"
 
     res = requests.get(url)
     if res.status_code == 403:
         get_api_key(True)
-        return query_for_initial_suggestions(video_id, _max_video_age)
+        return query_for_initial_suggestions(_video_id=_video_id, _max_video_age=_max_video_age)
     elif res.status_code is not 200:
         error = res.json()
         print(error["error"])
@@ -190,7 +190,8 @@ def create_queue():
     else:
         _search_id = _next[0]
 
-    raw_video_ids = query_for_initial_suggestions(video_id=_search_id, _max_video_age)
+    raw_video_ids = query_for_initial_suggestions(
+        _video_id=_search_id, _max_video_age=_max_video_age)
 
     res = requests.get(f"{filter_ids_base_url}{','.join(raw_video_ids)}")
     res_json = res.json()
