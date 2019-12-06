@@ -15,8 +15,6 @@ import os
 import re
 
 
-account = get_accout()
-
 output_path = f'{os.getcwd()}/videos/'
 
 removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
@@ -59,6 +57,7 @@ def get_video(_max_video_length):
 
 
 def upload_to_dailymotion():
+    account = get_accout()
 
     # Delete any videos in the videos folder
 

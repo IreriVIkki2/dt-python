@@ -9,6 +9,3 @@ def get_accout():
     print(res)
     account = res.json()
     return account
-
-
-get_accout = get_accout()
