@@ -63,7 +63,7 @@ def video_length_in_seconds(ar):
     return int(ar[0]) * 3600 + int(ar[1]) * 60 + int(ar[2])
 
 
-def query_for_initial_suggestions(video_id, ):
+def query_for_initial_suggestions(video_id, _max_video_age):
     api_key = get_api_key(False)
     d1 = datetime.datetime.now()
     d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
@@ -72,7 +72,7 @@ def query_for_initial_suggestions(video_id, ):
     res = requests.get(url)
     if res.status_code == 403:
         get_api_key(True)
-        return query_for_initial_suggestions(video_id)
+        return query_for_initial_suggestions(video_id, _max_video_age)
     elif res.status_code is not 200:
         error = res.json()
         print(error["error"])
@@ -181,6 +181,7 @@ def create_queue():
     account = get_accout()
     _next = account["queryId"]["next"]
     _current = account["queryId"]["current"]
+    _max_video_age = account["searchOptions"]["videoAge"]
 
     _new_queue = {"exists": True}
 
@@ -189,7 +190,7 @@ def create_queue():
     else:
         _search_id = _next[0]
 
-    raw_video_ids = query_for_initial_suggestions(video_id=_search_id)
+    raw_video_ids = query_for_initial_suggestions(video_id=_search_id, _max_video_age)
 
     res = requests.get(f"{filter_ids_base_url}{','.join(raw_video_ids)}")
     res_json = res.json()
