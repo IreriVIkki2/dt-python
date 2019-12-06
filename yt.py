@@ -47,6 +47,7 @@ def get_video(_max_video_length):
         return res_json["video"]
 
     elif action == 205:
+        time.sleep(5)
         create_queue()
         return get_video(_max_video_length)
 
