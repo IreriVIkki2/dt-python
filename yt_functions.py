@@ -1,5 +1,5 @@
 from current_channel import get_accout, _channel_key
-from datetime import datetime
+import datetime
 import dateutil.parser
 import requests
 import json
@@ -24,7 +24,7 @@ def get_api_key(_api_key_limited):
         data = {
             "key": _current_api_key,
             "limited": True,
-            "limitedAt": datetime.now().isoformat()
+            "limitedAt": datetime.datetime.now().isoformat()
         }
         requests.post(update_youtube_apikey_url, data={
                       "keyObject": json.dumps(data)})
@@ -44,7 +44,7 @@ def get_api_key(_api_key_limited):
 
 def video_age_in_minutes(_published_date):
     d1 = dateutil.parser.parse(_published_date).replace(tzinfo=None)
-    d2 = datetime.now()
+    d2 = datetime.datetime.now()
     d3 = d2-d1
     return divmod(d3.days * 86400 + d3.seconds, 60)[0]
 
@@ -63,9 +63,11 @@ def video_length_in_seconds(ar):
     return int(ar[0]) * 3600 + int(ar[1]) * 60 + int(ar[2])
 
 
-def query_for_initial_suggestions(video_id):
+def query_for_initial_suggestions(video_id, ):
     api_key = get_api_key(False)
-    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&relatedToVideoId={video_id}&type=video&key={api_key}"
+    d1 = datetime.datetime.now()
+    d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
+    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d2.isoformat()}relatedToVideoId={video_id}&type=video&key={api_key}"
 
     res = requests.get(url)
     if res.status_code == 403:
