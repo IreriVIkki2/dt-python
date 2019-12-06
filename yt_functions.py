@@ -67,7 +67,10 @@ def query_for_initial_suggestions(_video_id, _max_video_age):
     api_key = get_api_key(False)
     d1 = datetime.datetime.now()
     d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
-    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d2.isoformat()}relatedToVideoId={_video_id}&type=video&key={api_key}"
+    d3 = d2.isoformat()
+    url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d3}relatedToVideoId={_video_id}&type=video&key={api_key}"
+
+    print(url)
 
     res = requests.get(url)
     if res.status_code == 403:

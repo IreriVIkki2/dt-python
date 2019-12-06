@@ -58,7 +58,7 @@ def get_video(_max_video_length):
 
 def upload_to_dailymotion():
     account = get_accout()
-
+    print(account)
     # Delete any videos in the videos folder
 
     _is_limited = account['uploadStatus']['isLimited']
