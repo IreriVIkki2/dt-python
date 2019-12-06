@@ -177,7 +177,6 @@ def get_valid_video_info(_video_id):
 def create_queue():
     print('Initiated')
     _next = account["queryId"]["next"]
-    print(_next)
     _current = account["queryId"]["current"]
 
     _new_queue = {"exists": True}
@@ -194,7 +193,9 @@ def create_queue():
     _ids = res_json["finalIds"]
 
     if len(_next) is 0:
-        _next = _ids[:10] if len(_ids) else raw_video_ids[:25]
+        _new_next = _ids[:10] if len(_ids) else raw_video_ids[:25]
+    else:
+        _new_next = _next
 
     for _id in _ids:
         _valid_video = get_valid_video_info(_id)
@@ -210,14 +211,11 @@ def create_queue():
         else:
             print(_valid_video)
             _new_queue[_id] = _valid_video
-            _next.append(_id)
-
-    _new_next = _next[1:]
-    _new_current = _next[0]
+            _new_next.append(_id)
 
     _queryId = {
-        "current": _new_current,
-        "next": _new_next
+        "current": _new_next[0],
+        "next": _new_next[1:]
     }
 
     data = {
