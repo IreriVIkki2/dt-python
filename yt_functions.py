@@ -1,4 +1,4 @@
-from current_channel import account, _channel_key
+from current_channel import get_accout, _channel_key
 from datetime import datetime
 import dateutil.parser
 import requests
@@ -80,7 +80,7 @@ def query_for_initial_suggestions(video_id):
         return [video["id"]["videoId"] for video in videos["items"]]
 
 
-def get_valid_video_info(_video_id):
+def get_valid_video_info(_video_id, account):
     api_key = get_api_key(False)
     _valid_video = {"code": 200}
     video_url = f"https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics&id={_video_id}&key={api_key}"
@@ -176,6 +176,7 @@ def get_valid_video_info(_video_id):
 
 def create_queue():
     print('Initiated')
+    account = get_accout()
     _next = account["queryId"]["next"]
     _current = account["queryId"]["current"]
 
@@ -198,7 +199,7 @@ def create_queue():
         _new_next = _next
 
     for _id in _ids:
-        _valid_video = get_valid_video_info(_id)
+        _valid_video = get_valid_video_info(_id, account)
         code = _valid_video['code']
         if code is 101:
             print("Subscribers out of range")

@@ -11,4 +11,4 @@ def get_accout():
     return account
 
 
-account = get_accout()
+get_accout = get_accout()

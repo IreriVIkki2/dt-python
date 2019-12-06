@@ -1,4 +1,4 @@
-from current_channel import account, _channel_key
+from current_channel import get_accout, _channel_key
 from datetime import datetime, timedelta
 from yt_functions import create_queue
 from stopwords import stop_words
@@ -13,6 +13,9 @@ import stat
 import json
 import os
 import re
+
+
+account = get_accout()
 
 output_path = f'{os.getcwd()}/videos/'
 
