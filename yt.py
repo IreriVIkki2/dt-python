@@ -35,11 +35,16 @@ def get_video(_max_video_length, _remove_bug):
     getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}&removeBuggedVideo={_remove_bug}"
 
     res = requests.get(url=getYouTubeVideo)
+    print(res)
+    if res.status_code == 429:
+        time.sleep(100)
+        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
+
     try:
         res_json = res.json()
     except Exception as e:
-        create_queue()
-        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
+        print(e, ['this is the get video error'])
+        return get_video(_max_video_length=_max_video_length, _remove_bug=True)
 
     print('\n', '[Video found]', res_json, '\n')
     action = res_json["action"]
@@ -48,7 +53,7 @@ def get_video(_max_video_length, _remove_bug):
         return res_json["video"]
 
     elif action == 205:
-        time.sleep(15)
+        time.sleep(5)
         create_queue()
         return get_video(_max_video_length=_max_video_length, _remove_bug=False)
 
