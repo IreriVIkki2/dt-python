@@ -280,14 +280,21 @@ def upload_to_dailymotion():
         return '[Video uploaded to dailymotion]'
 
     except Exception as e:
-        print(e)
+        print(e.message)
         if 'access_forbidden: You reached your upload rate limit' in e.message:
             data = {
                 "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e.message}", "videoId": _video_id, "isLimited": True,
                 "limitedAt": f"{datetime.now(pytz.timezone('Africa/Nairobi'))}"}
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
-            # elif 'exceeds maximun'
+        elif 'video has exceeded maximum duration allowed' in e.message:
+            data = {
+                "code": 400, "message": f"Error: Publishing video failed =>  Reason: {e.message}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+            print('[Status --        ]', data, '\n')
+            updateChannelUploadStatus(_channel_key, data)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
+            return upload_to_dailymotion()
         else:
             data = {
                 "code": 400, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
