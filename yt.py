@@ -220,7 +220,7 @@ def upload_to_dailymotion():
             _queue, _video_id, channel_key=None, limits={})
         return upload_to_dailymotion()
 
-    print(file_path, '\n')
+    print(_file_path, '\n')
 
     try:
         url = dm.upload(_file_path)
