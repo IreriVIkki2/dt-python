@@ -35,7 +35,7 @@ def get_video(_max_video_length, _remove_bug):
     getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}&removeBuggedVideo={_remove_bug}"
 
     res = requests.get(url=getYouTubeVideo)
-    print(res)
+    print(res.status_code)
     if res.status_code == 429:
         time.sleep(100)
         return get_video(_max_video_length=_max_video_length, _remove_bug=False)
@@ -49,13 +49,14 @@ def get_video(_max_video_length, _remove_bug):
     print('\n', '[Video found]', res_json, '\n')
     action = res_json["action"]
 
-    if action == 200:
-        return res_json["video"]
-
-    elif action == 205:
-        time.sleep(5)
+    if action == 205:
+        print("Waiting to create new queue")
+        time.sleep(50)
         create_queue()
         return get_video(_max_video_length=_max_video_length, _remove_bug=False)
+
+    if action == 200:
+        return res_json["video"]
 
     elif action == 420:
         return action
@@ -71,7 +72,6 @@ def upload_to_dailymotion():
 
     if _is_limited:
         _now = datetime.now(pytz.timezone('Africa/Nairobi'))
-        print(_now)
         if _now-timedelta(hours=24) <= dateutil.parser.parse(account['uploadStatus']['limitedAt']) <= _now:
             data = {
                 "code": 420, "message": "Chilling: waiting on upload limit to be lifted", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
