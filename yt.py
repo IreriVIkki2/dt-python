@@ -108,6 +108,8 @@ def upload_to_dailymotion():
 
     video = get_video(_max_video_length=_max_video_length, _remove_bug=False)
 
+    print("stop me now")
+
     if video == 420:
         data = {
             "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}

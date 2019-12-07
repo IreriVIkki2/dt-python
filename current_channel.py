@@ -9,3 +9,5 @@ def get_accout():
     print(res)
     account = res.json()
     return account
+
+# git pull https://github.com/IreriVIkki2/dt-python.git
