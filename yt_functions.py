@@ -189,7 +189,7 @@ def create_queue():
     _current = account["queryId"]["current"]
     _max_video_age = account["searchOptions"]["videoAge"]
 
-    _new_queue = {"exists": True}
+    _new_queue = {}
 
     if len(_next) is 0:
         _search_id = _current
