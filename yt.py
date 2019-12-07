@@ -23,12 +23,17 @@ updateChannelUploadStatusUrl = "https://us-central1-vimeovids-ireri.cloudfunctio
 
 
 def updateChannelUploadStatus(channel_key, status):
-    return requests.post(updateChannelUploadStatusUrl, data={"channelKey": channel_key, "uploadStatus": json.dumps(status)})
+    requests.post(updateChannelUploadStatusUrl, data={
+                  "channelKey": channel_key, "uploadStatus": json.dumps(status)})
+    time.sleep(4)
+    return "updateChannelUploadStatus"
 
 
 def handleRemoveVideoFromQueue(queue, video_id, channel_key, limits):
-    return requests.post(removeVideoFromQueue, data={
+    requests.post(removeVideoFromQueue, data={
         "queue": queue, "videoId": video_id, "channelKey": channel_key, "limits": json.dumps(limits)})
+    time.sleep(4)
+    return "handleRemoveVideoFromQueue"
 
 
 def get_video(_max_video_length):
@@ -75,6 +80,7 @@ def upload_to_dailymotion():
             data = {
                 "code": 420, "message": "Chilling: waiting on upload limit to be lifted", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
             print('[Status --        ]', data, '\n')
+            time.sleep(4)
             return updateChannelUploadStatus(_channel_key, data)
         else:
             data = {
@@ -138,6 +144,7 @@ def upload_to_dailymotion():
                 handleRemoveVideoFromQueue(
                     _queue, _video_id, channel_key=None, limits={})
                 updateChannelUploadStatus(_channel_key, data)
+                time.sleep(4)
                 return upload_to_dailymotion()
 
             try:
@@ -157,6 +164,7 @@ def upload_to_dailymotion():
                     updateChannelUploadStatus(_channel_key, data)
                     handleRemoveVideoFromQueue(
                         _queue, _video_id, channel_key=None, limits={})
+                    time.sleep(4)
                     return upload_to_dailymotion()
 
                 if x+1 is len(streams):
@@ -166,6 +174,7 @@ def upload_to_dailymotion():
                     updateChannelUploadStatus(_channel_key, data)
                     handleRemoveVideoFromQueue(
                         _queue, _video_id, channel_key=None, limits={})
+                    time.sleep(4)
                     return upload_to_dailymotion()
 
                 print(streams, '\n')
@@ -276,7 +285,7 @@ def upload_to_dailymotion():
         print('[Status --        ]', data, '\n')
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
-
+        time.sleep(5)
         return '[Video uploaded to dailymotion]'
 
     except Exception as e:
@@ -294,6 +303,8 @@ def upload_to_dailymotion():
             updateChannelUploadStatus(_channel_key, data)
             handleRemoveVideoFromQueue(
                 _queue, _video_id, _channel_key, _limits)
+
+            time.sleep(4)
             return upload_to_dailymotion()
         else:
             data = {
@@ -302,8 +313,8 @@ def upload_to_dailymotion():
             updateChannelUploadStatus(_channel_key, data)
             handleRemoveVideoFromQueue(
                 _queue, _video_id, _channel_key, _limits)
-
-        return "[Error publishing video]"
+            time.sleep(4)
+            return "[Error publishing video]"
 
 
 upload_to_dailymotion()
