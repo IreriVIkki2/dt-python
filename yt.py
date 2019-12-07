@@ -207,8 +207,10 @@ def upload_to_dailymotion():
     _video_size = download_video()
 
     _file_path = f'{output_path}{_video_id}.mp4'
-    print(os.path.isfile(_file_path))
+    print("\n Video downloaded successfully\n" if os.path.isfile(
+        _file_path) else "\nError Downloading video\n")
 
+    time.sleep(5)
     if not os.path.isfile(_file_path):
         data = {
             "code": 420, "message": "Video was not downloaded, retrying with anther video", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
@@ -218,16 +220,15 @@ def upload_to_dailymotion():
             _queue, _video_id, channel_key=None, limits={})
         return upload_to_dailymotion()
 
-    print('[Video Downloaded successfully   ]', '\n')
+    print(file_path, '\n')
 
     try:
         url = dm.upload(_file_path)
     except Exception as e:
         print(e)
         data = {
-            "code": 500, "message": "Error: Uploading video failed", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
+            "code": 500, "message": f"Error: Uploading video failed => Reason {e}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
         updateChannelUploadStatus(_channel_key, data)
-        print('[Status --        ]', data, '\n')
         handleRemoveVideoFromQueue(
             _queue, _video_id, channel_key=None, limits={})
         return upload_to_dailymotion()
@@ -279,12 +280,14 @@ def upload_to_dailymotion():
         return '[Video uploaded to dailymotion]'
 
     except Exception as e:
+        print(e)
         if 'access_forbidden: You reached your upload rate limit' in e.message:
             data = {
-                "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": True,
+                "code": 420, "message": f"Error: Publishing video failed =>  Reason: {e.message}", "videoId": _video_id, "isLimited": True,
                 "limitedAt": f"{datetime.now(pytz.timezone('Africa/Nairobi'))}"}
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
+            # elif 'exceeds maximun'
         else:
             data = {
                 "code": 400, "message": f"Error: Publishing video failed =>  Reason: {e}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
