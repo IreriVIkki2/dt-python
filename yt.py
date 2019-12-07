@@ -31,29 +31,29 @@ def handleRemoveVideoFromQueue(queue, video_id, channel_key, limits):
         "queue": queue, "videoId": video_id, "channelKey": channel_key, "limits": json.dumps(limits)})
 
 
-def get_video(_max_video_length, _remove_bug):
-    getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}&removeBuggedVideo={_remove_bug}"
+def get_video(_max_video_length):
+    getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
 
     res = requests.get(url=getYouTubeVideo)
     print(res.status_code)
     if res.status_code == 429:
         time.sleep(100)
-        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
+        return get_video(_max_video_length)
 
     try:
         res_json = res.json()
     except Exception as e:
-        print(e, ['this is the get video error'])
-        return get_video(_max_video_length=_max_video_length, _remove_bug=True)
+        create_queue()
+        time.sleep(5)
+        return get_video(_max_video_length)
 
     print('\n', '[Video found]', res_json, '\n')
     action = res_json["action"]
 
     if action == 205:
-        print("Waiting to create new queue")
-        time.sleep(50)
         create_queue()
-        return get_video(_max_video_length=_max_video_length, _remove_bug=False)
+        time.sleep(5)
+        return get_video(_max_video_length)
 
     if action == 200:
         return res_json["video"]
@@ -65,7 +65,6 @@ def get_video(_max_video_length, _remove_bug):
 def upload_to_dailymotion():
     account = get_accout()
     print(account)
-    # Delete any videos in the videos folder
 
     _is_limited = account['uploadStatus']['isLimited']
     _limited_at = account['uploadStatus']['limitedAt']
@@ -106,7 +105,7 @@ def upload_to_dailymotion():
 
     os.mkdir(output_path)
 
-    video = get_video(_max_video_length=_max_video_length, _remove_bug=False)
+    video = get_video(_max_video_length)
 
     print("stop me now")
 
