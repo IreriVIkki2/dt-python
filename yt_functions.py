@@ -3,6 +3,7 @@ import dateutil.parser
 import datetime
 import requests
 import json
+import time
 import pytz
 import re
 
@@ -241,5 +242,9 @@ def create_queue():
     print(data)
 
     requests.post(update_queue_outcome_url, data={"data": json.dumps(data)})
+    time.sleep(10)
 
     return 200
+
+
+requests.post(update_queue_outcome_url, data={"data": json.dumps(data)})
