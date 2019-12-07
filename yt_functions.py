@@ -240,5 +240,4 @@ def create_queue():
     print(data)
 
     requests.post(update_queue_outcome_url, data={"data": json.dumps(data)})
-
     return 200

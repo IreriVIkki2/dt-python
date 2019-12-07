@@ -37,14 +37,14 @@ def get_video(_max_video_length):
     res = requests.get(url=getYouTubeVideo)
     print(res.status_code)
     if res.status_code == 429:
-        time.sleep(100)
+        time.sleep(120)
         return get_video(_max_video_length)
 
     try:
         res_json = res.json()
     except Exception as e:
         create_queue()
-        time.sleep(5)
+        time.sleep(20)
         return get_video(_max_video_length)
 
     print('\n', '[Video found]', res_json, '\n')
@@ -52,7 +52,7 @@ def get_video(_max_video_length):
 
     if action == 205:
         create_queue()
-        time.sleep(5)
+        time.sleep(20)
         return get_video(_max_video_length)
 
     if action == 200:
