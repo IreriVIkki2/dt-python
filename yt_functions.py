@@ -20,18 +20,19 @@ def get_api_key():
     _current_api_key = f1.read()
     f1.close()
     if not _current_api_key:
-        reset_api_key(404)
+        reset_api_key(403)
         return get_api_key()
     return _current_api_key
 
 
 def reset_api_key(code):
+    print(code)
     f1 = open('api_key.txt', 'r')
     f2 = open('api_key.txt', 'w')
     _current_api_key = f1.read()
-    print(_current_api_key)
+    print("_current_api_key", _current_api_key)
     url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey?reason={code}"
-    if code == 403 or not _current_api_key:
+    if code == 403:
         res = requests.get(url)
         api_key = res.json()
         _next_key = api_key["key"]
@@ -78,13 +79,11 @@ def query_for_initial_suggestions(_video_id, _max_video_age):
     d1 = datetime.datetime.now()
     d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
     d3 = d2.replace(tzinfo=None).isoformat().split('.')[0]
-    print('\n get_api_key()', get_api_key(), type(
-        get_api_key()), not get_api_key(), '\n')
+    print('\n get_api_key()', get_api_key())
     url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d3}Z&relatedToVideoId={_video_id}&type=video&key={get_api_key()}"
 
-    print(url)
-
     res = requests.get(url)
+    print(res, res.status_code)
     if res.status_code == 403:
         reset_api_key(403)
         return query_for_initial_suggestions(_video_id=_video_id, _max_video_age=_max_video_age)
