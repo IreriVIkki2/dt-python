@@ -22,41 +22,32 @@ def get_api_key():
     f1.close()
     print("get_api_key ==> _current_api_key", _current_api_key)
     if not _current_api_key:
-        reset_api_key(403)
+        reset_api_key()
         return get_api_key()
     return _current_api_key
 
 
-def reset_api_key(code):
-    print(code)
+def reset_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
     f1.close()
-    print("reset_api_key ==>_current_api_key", _current_api_key)
     url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey?reason={code}"
-    if code == 403:
-        res = requests.get(url)
-        api_key = res.json()
-        _next_key = api_key["key"]
-        print(_current_api_key != _next_key)
-        if _current_api_key != _next_key:
-            data = {
-                "key": _current_api_key,
-                "limited": True,
-                "limitedAt": datetime.datetime.now().isoformat()
-            }
-            requests.post(update_youtube_apikey_url, data={
-                "keyObject": json.dumps(data)})
-        f2 = open('api_key.txt', 'w')
-        f2.write(_next_key)
-        time.sleep(2)
-        f2.close()
-    f3 = open('api_key.txt', 'r')
-    _verdict = f3.read()
-    f3.close()
-    return _verdict
-
-# print(reset_api_key(200))
+    res = requests.get(url)
+    api_key = res.json()
+    _next_key = api_key["key"]
+    if _current_api_key != _next_key:
+        data = {
+            "key": _current_api_key,
+            "limited": True,
+            "limitedAt": datetime.datetime.now().isoformat()
+        }
+        requests.post(update_youtube_apikey_url, data={
+            "keyObject": json.dumps(data)})
+    f = open('api_key.txt', 'w')
+    f.write(_next_key)
+    time.sleep(2)
+    f.close()
+    return _next_key
 
 
 def video_age_in_minutes(_published_date):
@@ -90,7 +81,7 @@ def query_for_initial_suggestions(_video_id, _max_video_age):
     res = requests.get(url)
     print(res, res.status_code)
     if res.status_code == 403:
-        reset_api_key(403)
+        reset_api_key()
         return query_for_initial_suggestions(_video_id=_video_id, _max_video_age=_max_video_age)
     elif res.status_code is not 200:
         error = res.json()
@@ -108,7 +99,7 @@ def get_valid_video_info(_video_id, account):
     res = requests.get(video_url)
 
     if res.status_code == 403:
-        reset_api_key(403)
+        reset_api_key()
         return get_valid_video_info(_video_id, account)
     elif res.status_code is not 200:
         error = res.json()
@@ -150,7 +141,7 @@ def get_valid_video_info(_video_id, account):
     res = requests.get(channel_url)
 
     if res.status_code == 403:
-        reset_api_key(403)
+        reset_api_key()
         return get_valid_video_info(_video_id, account)
     elif res.status_code is not 200:
         error = res.json()
