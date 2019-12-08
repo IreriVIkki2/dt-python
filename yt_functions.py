@@ -11,7 +11,6 @@ filter_ids_base_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/re
 
 update_queue_outcome_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateCreateQueueOutcome"
 
-get_youtube_apikey_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey"
 
 update_youtube_apikey_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateYouTubeApiKey"
 
@@ -28,8 +27,9 @@ def reset_api_key(code):
     f2 = open('api_key.txt', 'w')
     _current_api_key = f1.read()
     print(_current_api_key)
+    url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey?reason={code}"
     if code == 403:
-        res = requests.get(get_youtube_apikey_url)
+        res = requests.get(url)
         api_key = res.json()
         _next_key = api_key["key"]
         print(_current_api_key != _next_key)
@@ -46,6 +46,8 @@ def reset_api_key(code):
     f1.close()
     f2.close()
     return _verdict
+
+# print(reset_api_key(200))
 
 
 def video_age_in_minutes(_published_date):
