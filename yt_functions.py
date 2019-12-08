@@ -31,7 +31,7 @@ def reset_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
     f1.close()
-    url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey?reason={code}"
+    url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey"
     res = requests.get(url)
     api_key = res.json()
     _next_key = api_key["key"]
