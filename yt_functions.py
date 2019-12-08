@@ -94,7 +94,7 @@ def query_for_initial_suggestions(_video_id, _max_video_age):
 
 def get_valid_video_info(_video_id, account):
     _valid_video = {"code": 200}
-    print(get_api_key())
+    print('\n get_api_key()', get_api_key(), '\n')
     video_url = f"https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet,statistics&id={_video_id}&key={get_api_key()}"
 
     res = requests.get(video_url)
