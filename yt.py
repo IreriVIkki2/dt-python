@@ -253,12 +253,6 @@ def upload_to_dailymotion():
     description_tags = list(set(
         [word for word in dw if word.lower() not in stop_words and len(word) > 2]))
 
-    _player_next_video = dm.get('/videos', {
-        'fields': 'id',
-        'sort': 'recent',
-        'owners': account["credentials"]["userName"]
-    })['list'][0]['id']  # This is a video id
-
     _limits = {
         "videoDuration": _max_video_length - _video_length,
         "videoSize": _max_video_size - _video_size
@@ -267,19 +261,28 @@ def upload_to_dailymotion():
     final_tags = list(set([tag for tag in list(
         _tags + title_tags + description_tags) if tag.lower() not in stop_words and len(tag) > 2]))
 
-    try:
-        dm.post('/me/videos',
-                {
-                    'url': url,
-                    'title': _title,
-                    'description': _description,
-                    'player_next_video': _player_next_video,
-                    'tags': ','.join(final_tags[:35]),
-                    'thumbnail_url': _thumbnail_url,
-                    'published': 'true',
-                    'channel': 'tv',
-                })
+    dm_post_obj = {
+        'url': url,
+        'title': _title,
+        'description': _description,
+        'tags': ','.join(final_tags[:35]),
+        'thumbnail_url': _thumbnail_url,
+        'published': 'true',
+        'channel': 'tv',
+    }
 
+    try:
+        _player_next_video = dm.get('/videos', {
+            'fields': 'id',
+            'sort': 'recent',
+            'owners': account["credentials"]["userName"]
+        })['list'][0]['id']  # This is a video id
+        dm_post_obj['player_next_video'] = _player_next_video
+    except:
+        pass
+
+    try:
+        dm.post('/me/videos', dm_post_obj)
         data = {
             "code": 200, "message": "Success: Video uploaded to dailymotion", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
         print('[Status --        ]', data, '\n')
