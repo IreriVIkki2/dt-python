@@ -13,9 +13,6 @@ filter_ids_base_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/re
 update_queue_outcome_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateCreateQueueOutcome"
 
 
-update_youtube_apikey_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateYouTubeApiKey"
-
-
 def get_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
@@ -31,18 +28,12 @@ def reset_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
     f1.close()
+
     url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey"
     res = requests.get(url)
     api_key = res.json()
     _next_key = api_key["key"]
-    if _current_api_key != _next_key:
-        data = {
-            "key": _current_api_key,
-            "limited": True,
-            "limitedAt": datetime.datetime.now().isoformat()
-        }
-        requests.post(update_youtube_apikey_url, data={
-            "keyObject": json.dumps(data)})
+
     f = open('api_key.txt', 'w')
     f.write(_next_key)
     time.sleep(2)
