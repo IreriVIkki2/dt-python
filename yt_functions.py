@@ -19,6 +19,9 @@ def get_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
     f1.close()
+    if not _current_api_key:
+        reset_api_key(404)
+        return get_api_key()
     return _current_api_key
 
 
@@ -28,7 +31,7 @@ def reset_api_key(code):
     _current_api_key = f1.read()
     print(_current_api_key)
     url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey?reason={code}"
-    if code == 403:
+    if code == 403 or not _current_api_key:
         res = requests.get(url)
         api_key = res.json()
         _next_key = api_key["key"]
