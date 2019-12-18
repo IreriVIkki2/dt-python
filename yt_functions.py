@@ -17,7 +17,6 @@ def get_api_key():
     f1 = open('api_key.txt', 'r')
     _current_api_key = f1.read()
     f1.close()
-    print("get_api_key ==> _current_api_key", _current_api_key)
     if not _current_api_key:
         reset_api_key()
         return get_api_key()
@@ -63,7 +62,6 @@ def video_length_in_seconds(ar):
     else:
         pass
 
-    print(ar)
     return int(ar[0]) * 3600 + int(ar[1]) * 60 + int(ar[2])
 
 
@@ -124,7 +122,7 @@ def get_valid_video_info(_video_id, account):
         _video_tags = []
 
     # account search options
-    search_options = account["searchOptions"]
+    search_options = account["searchOpt print('\n get_api_key(ions"]
     _min_subscribers = search_options["minSubscribers"]
     _max_subscribers = search_options["maxSubscribers"]
     _max_video_age = search_options["videoAge"]
