@@ -38,7 +38,7 @@ def reset_api_key():
     if _current_api_key == _next_key:
         print("No more valid keys for now")
         exit()
-        
+
     f = open('api_key.txt', 'w')
     f.write(_next_key)
     time.sleep(2)
@@ -71,7 +71,6 @@ def query_for_initial_suggestions(_video_id, _max_video_age):
     d1 = datetime.datetime.now()
     d2 = d1 - datetime.timedelta(minutes=int(_max_video_age))
     d3 = d2.replace(tzinfo=None).isoformat().split('.')[0]
-    print('\n get_api_key()', get_api_key())
     url = f"https://www.googleapis.com/youtube/v3/search?part=id&maxResults=50&publishedAfter={d3}Z&relatedToVideoId={_video_id}&type=video&key={get_api_key()}"
 
     res = requests.get(url)
