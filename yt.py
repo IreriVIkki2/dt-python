@@ -134,7 +134,7 @@ def upload_to_dailymotion():
             try:
                 # Get videos streams
                 print('getting video object')
-                yt_download = YouTube(
+                yt = YouTube(
                     f"https://www.youtube.com/watch?v={_video_id}")
 
             except:
@@ -150,14 +150,30 @@ def upload_to_dailymotion():
             try:
                 # Download the youtube video
                 print('getting streams')
-                # streams = yt_download.streams.filter(
-                #     progressive=True,
-                #     file_extension='mp4'
-                # ).order_by(
-                #     'resolution'
-                # ).desc().all()
+             
+                streams = yt.streams.all()
 
-                streams = yt.streams.filter(mime_type='video/mp4', res='').all()
+                final_streams = []
+
+                for stream in streams:
+                    res_1 = re.findall(r'res="\d+', f"{stream}")
+                    if len(res_1) is 0:
+                        continue
+                    res = int(re.findall(r'\d+', res_1[0])[0])
+                    mime = re.findall(r'mime_type="video/\w+', f"{stream}")
+                    final_streams.append({
+                        "stream":stream,
+                        "res":  res,
+                        "mime": mime[0].split('mime_type="video/')[-1]
+                    })
+
+
+                final_streams = sorted(final_streams, key = lambda i: ( -i['res'], i['mime']))
+
+                for i in final_streams:
+                    print(i['stream'], i['mime'], i['res'], '\n')
+                    
+                streams = [i['stream'] for i in final_streams]
 
                 if len(streams) is 0:
                     data = {
