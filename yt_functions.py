@@ -122,7 +122,7 @@ def get_valid_video_info(_video_id, account):
         _video_tags = []
 
     # account search options
-    search_options = account["searchOpt print('\n get_api_key(ions"]
+    search_options = account["searchOptions"]
     _min_subscribers = search_options["minSubscribers"]
     _max_subscribers = search_options["maxSubscribers"]
     _max_video_age = search_options["videoAge"]
