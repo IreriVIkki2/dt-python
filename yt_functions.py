@@ -34,6 +34,11 @@ def reset_api_key():
     api_key = res.json()
     _next_key = api_key["key"]
 
+    
+    if _current_api_key == _next_key:
+        print("No more valid keys for now")
+        exit()
+        
     f = open('api_key.txt', 'w')
     f.write(_next_key)
     time.sleep(2)
