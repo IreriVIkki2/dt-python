@@ -307,7 +307,8 @@ def upload_to_dailymotion():
         updateChannelUploadStatus(_channel_key, data)
         handleRemoveVideoFromQueue(_queue, _video_id, _channel_key, _limits)
         time.sleep(5)
-        return '[Video uploaded to dailymotion]'
+        print('[Video uploaded to dailymotion]')
+        exit()
 
     except Exception as e:
         print(e.message)
@@ -335,7 +336,8 @@ def upload_to_dailymotion():
             handleRemoveVideoFromQueue(
                 _queue, _video_id, _channel_key, _limits)
             time.sleep(4)
-            return "[Error publishing video]"
+            print("[Error publishing video]")
+            exit()
 
 
 upload_to_dailymotion()
