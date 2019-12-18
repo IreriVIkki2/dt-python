@@ -150,12 +150,14 @@ def upload_to_dailymotion():
             try:
                 # Download the youtube video
                 print('getting streams')
-                streams = yt_download.streams.filter(
-                    progressive=True,
-                    file_extension='mp4'
-                ).order_by(
-                    'resolution'
-                ).desc().all()
+                # streams = yt_download.streams.filter(
+                #     progressive=True,
+                #     file_extension='mp4'
+                # ).order_by(
+                #     'resolution'
+                # ).desc().all()
+
+                streams = yt.streams.filter(mime_type='video/mp4', res='').all()
 
                 if len(streams) is 0:
                     data = {
