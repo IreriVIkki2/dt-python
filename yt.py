@@ -119,7 +119,10 @@ def upload_to_dailymotion():
         print('[Status --        ]', data, '\n')
         return updateChannelUploadStatus(_channel_key, data)
 
-    video = video['video']
+    try:
+        video = video['video']
+    except:
+        pass
 
     _description = video["description"]
     _video_id = video["videoId"]
