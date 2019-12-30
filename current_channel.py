@@ -1,6 +1,6 @@
 import requests
 
-_channel_key = "1bce832abe239aaf80a3"
+_channel_key = "blueOceanOnly"
 
 
 def get_accout():
