@@ -106,6 +106,12 @@ def upload_to_dailymotion():
         info=_info
     )
 
+    try:
+        dm.get('/me')
+    except Exception as e:
+        print(e)
+        exit()
+
     if os.path.isdir(output_path):
         shutil.rmtree(output_path)
 
