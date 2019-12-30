@@ -127,7 +127,7 @@ def upload_to_dailymotion():
     _title = video["title"]
     _tags = video["tags"]
 
-    # handleRemoveVideoFromQueue(_queue, _video_id)
+    handleRemoveVideoFromQueue(_queue, _video_id)
 
     def download_video():
         for x in range(5):
