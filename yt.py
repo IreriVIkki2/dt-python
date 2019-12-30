@@ -109,7 +109,7 @@ def upload_to_dailymotion():
     try:
         dm.get('/me')
     except Exception as e:
-        if('The user has been disabled' in e):
+        if('The user has been disabled' in e.message):
             print(e)
             exit()
         print("user still good")
