@@ -129,6 +129,7 @@ def upload_to_dailymotion():
     _video_length = video["length"]
     _title = video["title"]
     _tags = video["tags"]
+    _thumbnail_url = video["thumbnail_url"]
 
     handleRemoveVideoFromQueue(_queue, _video_id)
 
@@ -277,6 +278,7 @@ def upload_to_dailymotion():
         'title': _title,
         'description': _description,
         'tags': ','.join(final_tags[:35]),
+        'thumbnail_url': _thumbnail_url,
         'published': 'true',
         'channel': 'fun',
     }
