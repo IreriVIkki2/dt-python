@@ -109,8 +109,10 @@ def upload_to_dailymotion():
     try:
         dm.get('/me')
     except Exception as e:
-        print(e)
-        exit()
+        if('The user has been disabled' in e):
+            print(e)
+            exit()
+        print("user still good")
 
     if os.path.isdir(output_path):
         shutil.rmtree(output_path)
