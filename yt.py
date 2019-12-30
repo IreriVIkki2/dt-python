@@ -110,9 +110,8 @@ def upload_to_dailymotion():
         dm.get('/me')
     except Exception as e:
         if('The user has been disabled' in e.message):
-            print(e)
+            updateChannelUploadStatus(_channel_key, {"Fuck": e.message})
             exit()
-        print("user still good")
 
     if os.path.isdir(output_path):
         shutil.rmtree(output_path)
