@@ -113,7 +113,7 @@ def upload_to_dailymotion():
 
     video = get_video(_max_video_length)
 
-    print("stop me now", video)
+    print("stop me now", video["description"])
 
     if video == 420:
         data = {
