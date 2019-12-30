@@ -113,13 +113,13 @@ def upload_to_dailymotion():
 
     video = get_video(_max_video_length)
 
-    print("stop me now", video, video["video"])
-
     if video == 420:
         data = {
             "code": 420, "message": "Slowing down, limited upload minutes left", "videoId": None, "isLimited": _is_limited, "limitedAt": _limited_at}
         print('[Status --        ]', data, '\n')
         return updateChannelUploadStatus(_channel_key, data)
+
+    video = video['video']
 
     _description = video["description"]
     _video_id = video["videoId"]
