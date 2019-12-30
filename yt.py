@@ -31,7 +31,7 @@ def updateChannelUploadStatus(channel_key, status):
 
 def handleRemoveVideoFromQueue(queue, video_id):
     requests.post(removeVideoFromQueue, data={
-        "queue": queue, "videoId": video_id, "channelKey": None, "limits": {})
+        "queue": queue, "videoId": video_id, "channelKey": None, "limits": json.dumps({})})
     time.sleep(4)
     return "handleRemoveVideoFromQueue"
 
