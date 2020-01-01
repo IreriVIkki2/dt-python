@@ -138,7 +138,7 @@ def upload_to_dailymotion():
     _tags = video["tags"]
     _thumbnail_url = video["thumbnail_url"]
 
-    handleRemoveVideoFromQueue(_queue, _video_id)
+    handleRemoveVideoFromQueue(_queue, _video_id)   
 
     def download_video():
         for x in range(5):
@@ -308,6 +308,8 @@ def upload_to_dailymotion():
         updateChannelUploadStatus(_channel_key, data)
         time.sleep(2)
         print('[Video uploaded to dailymotion]')
+        handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
         exit()
 
     except Exception as e:
@@ -318,12 +320,16 @@ def upload_to_dailymotion():
                 "limitedAt": f"{datetime.now(pytz.timezone('Africa/Nairobi'))}"}
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
             exit()
         elif 'video has exceeded maximum duration allowed' in e.message:
             data = {
                 "code": 400, "message": f"Error: Publishing video failed =>  Reason: {e.message}", "videoId": _video_id, "isLimited": _is_limited, "limitedAt": _limited_at}
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
             time.sleep(4)
             return upload_to_dailymotion()
         else:
@@ -332,6 +338,8 @@ def upload_to_dailymotion():
             print('[Status --        ]', data, '\n')
             updateChannelUploadStatus(_channel_key, data)
             time.sleep(4)
+            handleRemoveVideoFromQueue(
+                _queue, _video_id, _channel_key, _limits)
             print("[Error publishing video]")
             return upload_to_dailymotion()
 
