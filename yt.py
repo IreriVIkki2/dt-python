@@ -1,5 +1,5 @@
-from current_channel import get_accout, _channel_key
-from datetime import datetime, timedelta
+from current_channel import get_accout
+from base import _channel_key, _base_url
 from yt_functions import create_queue
 from stopwords import stop_words
 from pytube import YouTube
@@ -17,9 +17,9 @@ import re
 
 output_path = f'{os.getcwd()}/videos/'
 
-removeVideoFromQueue = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeVideoFromQueue"
+removeVideoFromQueue = f"{_base_url}/removeVideoFromQueue"
 
-updateChannelUploadStatusUrl = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateChannelUploadStatus"
+updateChannelUploadStatusUrl = f"{_base_url}/updateChannelUploadStatus"
 
 
 def updateChannelUploadStatus(channel_key, status):
@@ -37,7 +37,7 @@ def handleRemoveVideoFromQueue(queue, video_id):
 
 
 def get_video(_max_video_length):
-    getYouTubeVideo = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
+    getYouTubeVideo = f"{_base_url}/getYouTubeVideo?channelKey={_channel_key}&maxLength={_max_video_length}"
 
     res = requests.get(url=getYouTubeVideo)
     print(res.status_code)

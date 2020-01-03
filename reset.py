@@ -1,7 +1,7 @@
-from current_channel import _channel_key
+from base import _channel_key, _base_url
 import requests
 
-resetChannelLimitsUrl = "https://us-central1-vimeovids-ireri.cloudfunctions.net/resetChannelLimits"
+resetChannelLimitsUrl = f"{_base_url}/resetChannelLimits"
 
 
 def resetChannelLimits(channel_key):

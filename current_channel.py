@@ -1,10 +1,8 @@
 import requests
-
-_channel_key = "1bce832abe239aaf80a3"
-
+from base import _channel_key, _base_url
 
 def get_accout():
-    url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getDailyMotionAccount?channelKey={_channel_key}"
+    url = f"{_functions_id}/getDailyMotionAccount?channelKey={_channel_key}"
     res = requests.get(url)
     print(res)
     account = res.json()

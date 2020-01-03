@@ -1,4 +1,5 @@
-from current_channel import get_accout, _channel_key
+from current_channel import get_accout
+from base import _channel_key, _base_url
 import dateutil.parser
 import datetime
 import requests
@@ -8,9 +9,9 @@ import pytz
 import re
 
 
-filter_ids_base_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/removeExistingIds?ids="
+filter_ids_base_url = f"{_base_url}/removeExistingIds?ids="
 
-update_queue_outcome_url = "https://us-central1-vimeovids-ireri.cloudfunctions.net/updateCreateQueueOutcome"
+update_queue_outcome_url = f"{_base_url}/updateCreateQueueOutcome"
 
 
 def get_api_key():
@@ -28,7 +29,7 @@ def reset_api_key():
     _current_api_key = f1.read()
     f1.close()
 
-    url = f"https://us-central1-vimeovids-ireri.cloudfunctions.net/getYouTubeApiKey"
+    url = f"{_base_url}/getYouTubeApiKey"
     res = requests.get(url)
     api_key = res.json()
     _next_key = api_key["key"]
