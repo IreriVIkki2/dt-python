@@ -310,6 +310,7 @@ def upload_to_dailymotion():
         print('[Video uploaded to dailymotion]')
         handleRemoveVideoFromQueue(
                 _queue, _video_id, _channel_key, _limits)
+        time.sleep(10)
         exit()
 
     except Exception as e:
