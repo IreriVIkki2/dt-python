@@ -2,7 +2,7 @@ import requests
 from base import _channel_key, _base_url
 
 def get_accout():
-    url = f"{_functions_id}/getDailyMotionAccount?channelKey={_channel_key}"
+    url = f"{_base_url}/getDailyMotionAccount?channelKey={_channel_key}"
     res = requests.get(url)
     print(res)
     account = res.json()
